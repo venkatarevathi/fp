@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wedding Booking System</title>
+  <script>
+    function redirectToLogin() {
+      window.location.href = "login.html";
+    }
+  </script>
+  <style>
+    :root {
+      --primary: #8B4513;
+      --secondary: #FFF5EE;
+    }
+
+    body {
+      font-family: 'Georgia', serif;
+      background: var(--secondary);
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: var(--primary);
+      text-align: center;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 15px;
+    }
+
+    .form-section {
+      margin: 25px 0;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+
+    .package-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .package-card {
+      border: 2px solid var(--primary);
+      padding: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .package-card.selected {
+      background: var(--secondary);
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 18px;
+      width: 100%;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .confirmation {
+      display: none;
+      text-align: center;
+      padding: 30px;
+      background: var(--secondary);
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .confirmation h2 {
+      color: var(--primary);
+      font-size: 32px;
+      margin-bottom: 30px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .confirmation h2:after {
+      content: '✓';
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #4CAF50;
+      color: white;
+      font-size: 22px;
+      position: absolute;
+      right: -50px;
+      top: -5px;
+      line-height: 40px;
+    }
+
+    #confirmationDetails {
+      background: white;
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      text-align: left;
+      font-size: 18px;
+      line-height: 1.8;
+      margin-bottom: 30px;
+    }
+
+    #confirmationDetails strong {
+      color: var(--primary);
+      font-size: 22px;
+      display: block;
+      text-align: center;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    .confirmation .back-btn {
+      display: inline-block;
+      margin-top: 20px;
+      background: var(--primary);
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 30px;
+      transition: all 0.3s ease;
+      font-size: 16px;
+    }
+
+    .confirmation .back-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);
+    }
+
+    .payment-methods {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .payment-method {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      padding: 20px 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      height: 120px;
+    }
+
+    .payment-method:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border-color: var(--primary);
+    }
+
+    .payment-method.selected {
+      border-color: var(--primary);
+      background-color: rgba(139, 69, 19, 0.1);
+      box-shadow: 0 5px 15px rgba(139, 69, 19, 0.2);
+    }
+
+    .payment-method img {
+      height: 45px;
+      object-fit: contain;
+      margin-bottom: 15px;
+      transition: transform 0.3s ease;
+    }
+
+    .payment-method:hover img {
+      transform: scale(1.1);
+    }
+
+    .payment-method span {
+      font-weight: 600;
+      color: #444;
+      text-align: center;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-top: 20px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: bold;
+      padding: 10px 15px;
+      border: 1px solid var(--primary);
+      border-radius: 5px;
+      transition: 0.3s;
+    }
+
+    .back-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .credit-card-section,
+    .upi-section {
+      display: none;
+      margin-top: 20px;
+      background: #f9f9f9;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .credit-card-section.active,
+    .upi-section.active {
+      display: block;
+      animation: fadeIn 0.5s;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+
+      .payment-methods {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, .3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      -webkit-animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to {
+        -webkit-transform: rotate(360deg);
+      }
+    }
+
+    @-webkit-keyframes spin {
+      to {
+        -webkit-transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>💍 Wedding Booking System</h1>
+    <form id="weddingForm">
+
+      <div class="form-section">
+        <h2>Couple Information</h2>
+        <label>Groom's Full Name: <input type="text" id="groomName" required></label>
+        <label>Bride's Full Name: <input type="text" id="brideName" required></label>
+        <label>Contact Email: <input type="email" id="email" required></label>
+        <label>Phone Number: <input type="tel" id="phone" pattern="[0-9]{10}" required></label>
+      </div>
+
+      <div class="form-section">
+        <h2>Event Details</h2>
+        <label>Wedding Date: <input type="date" id="weddingDate" required></label>
+        <label>Ceremony Time: <input type="time" id="ceremonyTime" required></label>
+        <label>Number of Guests: <input type="number" id="guests" min="50" max="500" required></label>
+        <label>Venue Type:
+          <select id="venueType" required>
+            <option value="">Select Venue</option>
+            <option value="church">Church</option>
+            <option value="garden">Garden</option>
+            <option value="banquet">Banquet Hall</option>
+            <option value="beach">Beach</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="form-section">
+        <h2>Select Package</h2>
+        <div class="package-options">
+          <div class="package-card" onclick="selectPackage('basic')">
+            <h3>Basic Package</h3>
+            <p>Includes ceremony coordination, basic decor, and 4-hour venue booking</p>
+          </div>
+          <div class="package-card" onclick="selectPackage('premium')">
+            <h3>Premium Package</h3>
+            <p>Full-service planning, premium decor, catering for 100 guests, and 8-hour venue booking</p>
+          </div>
+          <div class="package-card" onclick="selectPackage('luxury')">
+            <h3>Luxury Package</h3>
+            <p>Complete wedding management, luxury venues, photography/videography, and honeymoon planning</p>
+          </div>
+        </div>
+        <input type="hidden" id="selectedPackage" required>
+      </div>
+
+      <div class="form-section">
+        <h2>Additional Services</h2>
+        <label><input type="checkbox" name="catering"> Catering Service</label>
+        <label><input type="checkbox" name="photography"> Photography/Videography</label>
+        <label><input type="checkbox" name="music"> Music Band/DJ</label>
+        <label><input type="checkbox" name="decor"> Special Decorations</label>
+      </div>
+
+      <div class="form-section">
+        <label><input type="checkbox" required> I agree to the terms and conditions</label>
+      </div>
+      <button type="submit">Book Now</button>
+    </form>
+    <div class="form-section">
+      <h2>Payment Information</h2>
+
+      <div id="paymentMethodSelection">
+        <h3>Select Payment Method</h3>
+        <div class="payment-methods">
+          <div class="payment-method" data-method="credit-card" onclick="selectPaymentMethod('credit-card')">
+            <img src="https://cdn-icons-png.flaticon.com/512/179/179457.png" alt="Credit Card" width="40" height="40">
+            <span>Credit/Debit Card</span>
+          </div>
+          <div class="payment-method" data-method="phonepe" onclick="selectPaymentMethod('phonepe')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/PhonePe_Logo.png/800px-PhonePe_Logo.png"
+              alt="PhonePe" width="40" height="40">
+            <span>PhonePe</span>
+          </div>
+          <div class="payment-method" data-method="googlepay" onclick="selectPaymentMethod('googlepay')">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Google_Pay_Logo_%282020%29.svg/2560px-Google_Pay_Logo_%282020%29.svg.png"
+              alt="Google Pay" width="80" height="40">
+            <span>Google Pay</span>
+          </div>
+          <div class="payment-method" data-method="paytm" onclick="selectPaymentMethod('paytm')">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paytm_Logo_%282018%29.svg/2560px-Paytm_Logo_%282018%29.svg.png"
+              alt="Paytm" width="80" height="40">
+            <span>Paytm</span>
+          </div>
+          <div class="payment-method" data-method="upi" onclick="selectPaymentMethod('upi')">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/UPI-Logo-vector.svg/1200px-UPI-Logo-vector.svg.png"
+              alt="UPI" width="60" height="40">
+            <span>UPI</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="creditCardSection" class="credit-card-section">
+        <h3>Credit Card Details</h3>
+        <label>Card Number: <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19"
+            required></label>
+        <label>Card Holder Name: <input type="text" id="cardHolderName" placeholder="John Doe" required></label>
+        <div style="display: flex; gap: 15px;">
+          <label style="flex: 1;">Expiration Date: <input type="month" id="expirationDate" required></label>
+          <label style="flex: 1;">CVV: <input type="password" id="cvv" placeholder="***" maxlength="3" required></label>
+        </div>
+        <label>Billing Address: <input type="text" id="billingAddress" required></label>
+        <button type="button" onclick="processCardPayment()">Pay Now</button>
+        <button type="button" class="back-btn" onclick="backToPaymentMethods()"
+          style="background: none; color: var(--primary);">Back to Payment Methods</button>
+      </div>
+
+      <div id="upiSection" class="upi-section">
+        <h3>UPI Payment</h3>
+        <label>UPI ID: <input type="text" id="upiId" placeholder="username@upi" required></label>
+        <button type="button" onclick="processUpiPayment()">Pay Now</button>
+        <button type="button" class="back-btn" onclick="backToPaymentMethods()"
+          style="background: none; color: var(--primary);">Back to Payment Methods</button>
+      </div>
+    </div>
+
+    <!-- Add confirmation modal -->
+    <div class="modal-overlay" id="bookingConfirmModal">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h3>Confirm Your Booking</h3>
+        </div>
+        <div class="modal-body">
+          <p>Please confirm your wedding booking details:</p>
+          <div id="bookingSummary"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="secondary-btn" onclick="closeConfirmModal()">Cancel</button>
+          <button type="button" onclick="confirmBooking()">Confirm & Proceed to Payment</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="confirmation" id="confirmation">
+      <h2>Booking Confirmed!</h2>
+      <p>Thank you for choosing our wedding services. Your booking details are as follows:</p>
+      <div id="confirmationDetails"></div>
+      <p>A confirmation email has been sent to your registered email address.<br>
+        Our team will contact you shortly to discuss further details.</p>
+      <a href="index.html" class="back-btn">Return to Home</a>
+    </div>
+  </div>
+
+  <script>
+    function selectPackage(packageType) {
+      document.querySelectorAll('.package-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      event.currentTarget.classList.add('selected');
+      document.getElementById('selectedPackage').value = packageType;
+    }
+
+    function selectPaymentMethod(method) {
+      document.querySelectorAll('.payment-method').forEach(pm => {
+        pm.classList.remove('selected');
+      });
+      event.currentTarget.classList.add('selected');
+
+      // Hide all payment sections
+      document.getElementById('paymentMethodSelection').style.display = 'block';
+      document.getElementById('creditCardSection').classList.remove('active');
+      document.getElementById('upiSection').classList.remove('active');
+
+      // Show the appropriate payment section
+      if (method === 'credit-card') {
+        document.getElementById('paymentMethodSelection').style.display = 'none';
+        document.getElementById('creditCardSection').classList.add('active');
+      } else if (method === 'upi' || method === 'phonepe' || method === 'googlepay' || method === 'paytm') {
+        document.getElementById('paymentMethodSelection').style.display = 'none';
+        document.getElementById('upiSection').classList.add('active');
+        if (method === 'phonepe') {
+          document.getElementById('upiId').placeholder = 'Enter PhonePe linked mobile number or UPI ID';
+        } else if (method === 'googlepay') {
+          document.getElementById('upiId').placeholder = 'Enter Google Pay linked mobile number or UPI ID';
+        } else if (method === 'paytm') {
+          document.getElementById('upiId').placeholder = 'Enter Paytm linked mobile number or UPI ID';
+        } else {
+          document.getElementById('upiId').placeholder = 'username@upi';
+        }
+      }
+    }
+
+    function backToPaymentMethods() {
+      document.getElementById('paymentMethodSelection').style.display = 'block';
+      document.getElementById('creditCardSection').classList.remove('active');
+      document.getElementById('upiSection').classList.remove('active');
+      document.querySelectorAll('.payment-method').forEach(pm => {
+        pm.classList.remove('selected');
+      });
+    }
+
+    function processCardPayment() {
+      const cardNumber = document.getElementById('cardNumber').value.trim();
+      const cardHolder = document.getElementById('cardHolderName').value.trim();
+      const expDate = document.getElementById('expirationDate').value;
+      const cvv = document.getElementById('cvv').value.trim();
+      const address = document.getElementById('billingAddress').value.trim();
+
+      if (!cardNumber || !cardHolder || !expDate || !cvv || !address) {
+        alert('Please fill in all credit card details');
+        return;
+      }
+
+      // Show loading state
+      const payButton = document.querySelector('#creditCardSection button');
+      payButton.innerHTML = '<span class="spinner"></span> Processing...';
+      payButton.disabled = true;
+
+      // In a real app, you would send this data to a secure payment processor
+      // For this demo, we'll just simulate a successful payment after 2 seconds
+      setTimeout(() => {
+        simulateSuccessfulPayment();
+      }, 2000);
+    }
+
+    function processUpiPayment() {
+      const upiId = document.getElementById('upiId').value.trim();
+
+      if (!upiId) {
+        alert('Please enter a valid UPI ID');
+        return;
+      }
+
+      // Show loading state
+      const payButton = document.querySelector('#upiSection button');
+      payButton.innerHTML = '<span class="spinner"></span> Processing...';
+      payButton.disabled = true;
+
+      // In a real app, you would initiate a UPI payment request
+      // For this demo, we'll just simulate a successful payment after 2 seconds
+      setTimeout(() => {
+        simulateSuccessfulPayment();
+      }, 2000);
+    }
+
+    function simulateSuccessfulPayment() {
+      // Display loading message or spinner here if needed
+      setTimeout(() => {
+        completeBooking();
+      }, 1500); // Simulate processing delay
+    }
+
+    function completeBooking() {
+      const formData = {
+        groom: document.getElementById('groomName').value.trim(),
+        bride: document.getElementById('brideName').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        date: document.getElementById('weddingDate').value,
+        time: document.getElementById('ceremonyTime').value,
+        guests: document.getElementById('guests').value,
+        venue: document.getElementById('venueType').value,
+        package: document.getElementById('selectedPackage').value,
+        services: Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+          .map(service => service.name).filter(name => name !== "")
+      };
+
+      document.getElementById('weddingForm').style.display = 'none';
+      document.getElementById('creditCardSection').style.display = 'none';
+      document.getElementById('upiSection').style.display = 'none';
+      document.getElementById('confirmation').style.display = 'block';
+
+      const venueName = {
+        'church': 'Church',
+        'garden': 'Garden',
+        'banquet': 'Banquet Hall',
+        'beach': 'Beach'
+      }[formData.venue] || formData.venue;
+
+      const packageName = {
+        'basic': 'Basic Package',
+        'premium': 'Premium Package',
+        'luxury': 'Luxury Package'
+      }[formData.package] || formData.package;
+
+      document.getElementById('confirmationDetails').innerHTML = `
+        <strong>${formData.groom} & ${formData.bride}</strong>
+        <div>
+          <p>📅 <b>Date:</b> ${new Date(formData.date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          <p>⏰ <b>Time:</b> ${new Date('2000-01-01T' + formData.time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
+          <p>📍 <b>Venue:</b> ${venueName}</p>
+          <p>👥 <b>Guests:</b> ${formData.guests} people</p>
+          <p>📦 <b>Package:</b> ${packageName}</p>
+          <p>🎁 <b>Services:</b> ${formData.services.length > 0 ? formData.services.join(', ') : 'None selected'}</p>
+          <p>💰 <b>Payment:</b> Completed (Transaction ID: WED-${Math.random().toString(36).substr(2, 9).toUpperCase()})</p>
+        </div>
+      `;
+    }
+
+    document.getElementById('weddingForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const formData = {
+        groom: document.getElementById('groomName').value.trim(),
+        bride: document.getElementById('brideName').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        date: document.getElementById('weddingDate').value,
+        time: document.getElementById('ceremonyTime').value,
+        guests: document.getElementById('guests').value,
+        venue: document.getElementById('venueType').value,
+        package: document.getElementById('selectedPackage').value,
+        services: Array.from(document.querySelectorAll('input[type="checkbox"]:checked:not([required])'))
+          .map(service => service.name).filter(name => name !== "")
+      };
+
+      if (!formData.groom || !formData.bride || !formData.email || !formData.phone) {
+        alert('Please fill in all required fields!');
+        return;
+      }
+
+      if (!formData.package) {
+        alert('Please select a package!');
+        return;
+      }
+
+      // Show booking confirmation modal with summary
+      showBookingConfirmation(formData);
+    });
+
+    function showBookingConfirmation(formData) {
+      // Format the data for display
+      const venueName = {
+        'church': 'Church',
+        'garden': 'Garden',
+        'banquet': 'Banquet Hall',
+        'beach': 'Beach'
+      }[formData.venue] || formData.venue;
+
+      const packageName = {
+        'basic': 'Basic Package',
+        'premium': 'Premium Package',
+        'luxury': 'Luxury Package'
+      }[formData.package] || formData.package;
+
+      const formattedDate = formData.date ?
+        new Date(formData.date).toLocaleDateString('en-US',
+          { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : 'Not specified';
+
+      const formattedTime = formData.time ?
+        new Date('2000-01-01T' + formData.time).toLocaleTimeString('en-US',
+          { hour: '2-digit', minute: '2-digit' }) : 'Not specified';
+
+      // Build the HTML for the summary
+      document.getElementById('bookingSummary').innerHTML = `
+        <div class="summary-item">
+          <span class="summary-label">Couple:</span>
+          <span class="summary-value">${formData.groom} & ${formData.bride}</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Date:</span>
+          <span class="summary-value">${formattedDate}</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Time:</span>
+          <span class="summary-value">${formattedTime}</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Venue:</span>
+          <span class="summary-value">${venueName}</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Guests:</span>
+          <span class="summary-value">${formData.guests} people</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Package:</span>
+          <span class="summary-value">${packageName}</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label">Services:</span>
+          <span class="summary-value">${formData.services.length > 0 ? formData.services.join(', ') : 'None selected'}</span>
+        </div>
+      `;
+
+      // Show the modal
+      document.getElementById('bookingConfirmModal').classList.add('active');
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('bookingConfirmModal').classList.remove('active');
+    }
+
+    function confirmBooking() {
+      // Close the modal
+      closeConfirmModal();
+
+      // Scroll to payment section
+      document.querySelector('.form-section:last-of-type').scrollIntoView({ behavior: 'smooth' });
+
+      // Optional: Show a success message
+      alert('Booking details confirmed! Please complete your payment.');
+    }
+
+    // Format credit card number with spaces
+    document.getElementById('cardNumber').addEventListener('input', function (e) {
+      let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+      let formattedValue = '';
+      for (let i = 0; i < value.length; i++) {
+        if (i > 0 && i % 4 === 0) {
+          formattedValue += ' ';
+        }
+        formattedValue += value[i];
+      }
+      e.target.value = formattedValue;
+    });
+  </script>
+  <a href="index.html" class="btn">Back to Home</a> <!-- Link back to the main page -->
+</body>
+
+</html>
